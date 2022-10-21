@@ -1,0 +1,211 @@
+@prefix : <http://www.kastle-lab.org/pattern/computational-observation#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.kastle-lab.org/pattern/computational-observation> .
+
+<http://www.kastle-lab.org/pattern/computational-observation> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.kastle-lab.org/pattern/computational-observation#executedIn
+:executedIn rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#executesComputationalModel
+:executesComputationalModel rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#generatesOutput
+:generatesOutput rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#hasParameterInstantation
+:hasParameterInstantation rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#hasTemporalExtent
+:hasTemporalExtent rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#implements
+:implements rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#informedBy
+:informedBy rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#isCompiledFrom
+:isCompiledFrom rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#isExecutionOf
+:isExecutionOf rdf:type owl:ObjectProperty .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#utilizes
+:utilizes rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.kastle-lab.org/pattern/computational-observation#ComputationalEnvironment
+:ComputationalEnvironment rdf:type owl:Class .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#ComputationalModel
+:ComputationalModel rdf:type owl:Class ;
+                    rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                      owl:onProperty :utilizes ;
+                                      owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                      owl:onClass :Resource
+                                    ] .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#ComputationalModelExecution
+:ComputationalModelExecution rdf:type owl:Class ;
+                             rdfs:subClassOf :EntityWithProvenance ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty :executedIn ;
+                                               owl:someValuesFrom :ComputationalEnvironment
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty :generatesOutput ;
+                                               owl:allValuesFrom :ComputationalObservation
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty :generatesOutput ;
+                                               owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                               owl:onClass :ComputationalObservation
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty :hasParameterInstantation ;
+                                               owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                               owl:onClass :ParamaterInstantiation
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty :executesComputationalModel ;
+                                               owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                               owl:onClass :ComputationalModel
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty :hasTemporalExtent ;
+                                               owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                               owl:onClass :TemporalExtent
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty :isExecutionOf ;
+                                               owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                               owl:onClass :Executable
+                                             ] .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#ComputationalObservation
+:ComputationalObservation rdf:type owl:Class ;
+                          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                            owl:onProperty [ owl:inverseOf :generatesOutput
+                                                           ] ;
+                                            owl:someValuesFrom :ComputationalModelExecution
+                                          ] ,
+                                          [ rdf:type owl:Restriction ;
+                                            owl:onProperty :informedBy ;
+                                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                            owl:onClass :ComputationalModel
+                                          ] .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#EntityWithProvenance
+:EntityWithProvenance rdf:type owl:Class .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#Executable
+:Executable rdf:type owl:Class ;
+            rdfs:subClassOf :EntityWithProvenance ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :isCompiledFrom ;
+                              owl:allValuesFrom :Implementation
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :isCompiledFrom ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onClass :Implementation
+                            ] .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#Implementation
+:Implementation rdf:type owl:Class ;
+                rdfs:subClassOf :EntityWithProvenance ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :implements ;
+                                  owl:allValuesFrom :ComputationalModel
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :implements ;
+                                  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                  owl:onClass :ComputationalModel
+                                ] .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#ParamaterInstantiation
+:ParamaterInstantiation rdf:type owl:Class ;
+                        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                          owl:onProperty [ owl:inverseOf :hasParameterInstantation
+                                                         ] ;
+                                          owl:someValuesFrom :ComputationalModelExecution
+                                        ] .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#Resource
+:Resource rdf:type owl:Class ;
+          rdfs:subClassOf :EntityWithProvenance .
+
+
+###  http://www.kastle-lab.org/pattern/computational-observation#TemporalExtent
+:TemporalExtent rdf:type owl:Class .
+
+
+###  http://www.w3.org/2002/07/owl#Thing
+owl:Thing rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :executedIn ;
+                            owl:allValuesFrom :ComputationalEnvironment
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasParameterInstantation ;
+                            owl:allValuesFrom :ParamaterInstantiation
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasTemporalExtent ;
+                            owl:allValuesFrom :TemporalExtent
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :isExecutionOf ;
+                            owl:allValuesFrom :Executable
+                          ] .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:Restriction ;
+  owl:onProperty :implements ;
+  owl:someValuesFrom :ComputationalModel ;
+  rdfs:subClassOf :Implementation
+] .
+
+
+[ rdf:type owl:Restriction ;
+  owl:onProperty :isCompiledFrom ;
+  owl:someValuesFrom :Implementation ;
+  rdfs:subClassOf :Executable
+] .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
