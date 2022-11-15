@@ -1,4 +1,4 @@
-# computational-observation-pattern
+# Computational-Observation-Pattern
 An Ontology Design Pattern for Representing Computational Observations
 
 ## Schema Diagram
